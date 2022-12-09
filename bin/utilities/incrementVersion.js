@@ -1,11 +1,13 @@
 const shell = require('shelljs')
 const { getCurrentVersion } = require('./getCurrentVersion')
 const logs = require('./logs')
+const { exportVersion } = require('./exportVersion')
 
 /**
  * @param {'major'|'minor'|'patch'} [versionIncrement]
+ * @param {string|undefined} [exportVersion]
  */
-module.exports.incrementVersion = function (versionIncrement) {
+module.exports.incrementVersion = function (versionIncrement, exportVersionTo) {
   let newVersion = getCurrentVersion()
   
   if (!versionIncrement) {
@@ -31,6 +33,10 @@ module.exports.incrementVersion = function (versionIncrement) {
     throw new Error('Error bumping version')
   } else {
     newVersion = res.stdout.toString().replace(/\n/g, '').trim()
+    
+    if (exportVersionTo) {
+      exportVersion(newVersion, exportVersionTo)
+    }
     
     // push to dev
     shell.exec('git push origin dev --follow-tags')

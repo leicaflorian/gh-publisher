@@ -27,30 +27,37 @@ Release will be done only when choosing `main` or `master` branch.
 - `-b | --branch <destinationBranch>` - Branch where the release will be created. Defaults to `staging`.
 - `-r | --onlyRelease` - Only create the release branch and tag. Do not merge the release branch into the destination
   branch.
+- `-e | --exportVersion <filePath>` - Export the new version to the specified file.
+- `-ee | --onlyExportVersion <filePath>` - ONLY Export the new version to the specified file, without doing any other thing.
 - `--ignoreUncommitted` - Do not check if there are uncommitted changes in the working directory.
 
 ```bash
 # Show help
-github-publisher --help
+ghp --help
 
 # Publish a new release and merge into the staging branch
 # This won't create a new release
-github-publisher patch
+ghp patch
 
 # Publish a new release and merge into the main branch
 # This will create a new release
-github-publisher patch -b main
+ghp patch -b main
 
 # Publish a new release and merge into the staging and master branch
 # This will create a new release
-github-publisher patch -b staging,main
+ghp minor -b staging,main
+
+# Same as above, but also export the new version to a file
+ghp major -b staging,main -e bin/version 
 
 # Create only the release without bumping version, tag creation or merging
-github-publisher --onlyRelease
+ghp --onlyRelease
 
 # Create only the release without bumping version or merging while ignoring uncommitted changes
-github-publisher --onlyRelease --ignoreUncommitted
+ghp --onlyRelease --ignoreUncommitted
 
+# Export the new version to a file called "version" inside the folder "bin"
+ghp --onlyExportVersion bin/version
 ```
 
     
