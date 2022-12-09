@@ -4,6 +4,9 @@
   },
   "hooks": {
     "after:bump": "node ./release.hook.afterBump.js v${version} ./bin/version",
-    "after:release": "node ./release.hook.afterRelease.js ${branchName} Release v${version}"
+    "after:release": "node ./release.hook.afterRelease.js ${branchName} 'Release v${version}'"
+  },
+  "npm": {
+    "publish": false
   }
 }
