@@ -7,9 +7,9 @@
     "ghp": "./bin/index.js"
   },
   "scripts": {
-    "patch": "node . patch -b main -e",
-    "minor": "node . minor -b main -e",
-    "major": "node . major -b main -e"
+    "patch": "node . patch -b main -e bin/version",
+    "minor": "node . minor -b main -e bin/version",
+    "major": "node . major -b main -e bin/version"
   },
   "repository": {
     "type": "git",
