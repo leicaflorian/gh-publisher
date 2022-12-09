@@ -53,17 +53,17 @@ program.name('package-publisher')
     logs.sectionStart('Creating release branch for ' + newVersion)
     
     const releaseBranchName = `release/${newVersion}`
-    shell.exec(`git branch ${releaseBranchName}`)
+    shell.exec(`git branch ${releaseBranchName}`, { silent: true })
     shell.exec(`git push origin ${releaseBranchName}`)
     
     // merge release branch to destination branch
-    logs.sectionStart('Merging release branch to ' + branches.join(', '))
-    
     // for each branch, merge release branch
     branches.forEach(branch => {
-      shell.exec(`git checkout ${branch}`)
-      shell.exec(`git merge ${releaseBranchName} --no-ff`)
-      shell.exec(`git push origin ${branch}`)
+      logs.sectionStart(`Merging release branch to "${branch}"`)
+      
+      shell.exec(`git checkout ${branch}`, { silent: true })
+      shell.exec(`git merge ${releaseBranchName} --no-ff`, { silent: true })
+      shell.exec(`git push origin ${branch}`, { silent: true })
     })
     
     // create release on GitHub if destination branch is main
@@ -73,7 +73,9 @@ program.name('package-publisher')
     
     // return to dev
     logs.sectionStart('Returning to initial branch')
-    shell.exec('git checkout dev')
+    shell.exec('git checkout dev', { silent: true })
+    
+    logs.sectionEnd('Done!')
   })
 
 program.parse(process.argv)
