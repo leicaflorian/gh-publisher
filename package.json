@@ -1,6 +1,6 @@
 {
   "name": "gh-publisher",
-  "version": "1.1.4",
+  "version": "1.1.6",
   "description": "Script for automating apps publishing",
   "main": "bin/index.js",
   "bin": {
@@ -10,7 +10,8 @@
     "patch": "node . patch -b main -e bin/version",
     "minor": "node . minor -b main -e bin/version",
     "major": "node . major -b main -e bin/version",
-    "publish": "npm publish --access public"
+    "publish": "npm publish",
+    "release": "release-it"
   },
   "repository": {
     "type": "git",
@@ -30,5 +31,11 @@
   },
   "publishConfig": {
     "global": true
+  },
+  "files": [
+    "bin/"
+  ],
+  "devDependencies": {
+    "release-it": "^15.5.1"
   }
 }
