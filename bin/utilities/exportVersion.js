@@ -10,6 +10,7 @@ module.exports.exportVersion = function (newVersion, filePath) {
   
   shell.exec(`git add ${filePath}`, {silent: true})
   shell.exec(`git commit --amend --no-edit`, {silent: true})
+  shell.exec(`git push origin`, {silent: true})
   
   logs.sectionEnd('Version stored successfully!')
 }
