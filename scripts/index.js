@@ -2,6 +2,7 @@ const shell = require('shelljs')
 const { program } = require('commander')
 const { incrementVersion } = require('./utilities/incrementVersion')
 const { createRelease } = require('./utilities/createRelease')
+const logs = require('./utilities/logs')
 
 program.name('package-publisher')
   .description('Script for publishing a project and creating a release')
@@ -16,22 +17,27 @@ program.name('package-publisher')
   .action((versionIncrement, options) => {
     
     // check if all is committed
+    logs.sectionStart('Checking if all is committed')
     const status = shell.exec('git status --porcelain', { silent: true }).stdout.toString().trim()
     
     if (status && !options.ignoreUncommitted) {
-      console.error('You have uncommitted changes, please commit them before running this script')
+      logs.error('You have uncommitted changes, please commit them before running this script')
       return
     }
     
     // check branch is dev
+    logs.sectionStart('Checking if branch is "dev"')
     const branch = shell.exec('git branch --show-current', { silent: true }).stdout.toString().trim()
     
     if (branch !== 'dev') {
-      console.error('You are not on the dev branch, please switch to it before running this script')
+      logs.error('You are not on the dev branch, please switch to it before running this script')
       return
     }
     
+    // if requested only release, create it and exit
     if (options.onlyRelease) {
+      logs.sectionStart('Creating only release for the last tag without bumping version')
+      
       createRelease()
       return
     }
@@ -43,12 +49,16 @@ program.name('package-publisher')
     shell.exec('git push origin dev --follow-tags')
     
     // create release branch
+    logs.sectionStart('Creating release branch for ' + newVersion)
+    
     const releaseBranchName = `release/${newVersion}`
     // shell.exec(`git checkout -b ${releaseBranchName}`)
     shell.exec(`git branch ${releaseBranchName}`)
     shell.exec(`git push origin ${releaseBranchName}`)
     
     // merge release branch to destination branch
+    logs.sectionStart('Merging release branch to ' + options.branch)
+    
     shell.exec(`git checkout ${options.branch}`)
     shell.exec(`git merge ${releaseBranchName} --no-ff`)
     shell.exec(`git push origin ${options.branch}`)
