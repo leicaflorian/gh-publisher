@@ -8,9 +8,5 @@ module.exports.exportVersion = function (newVersion, filePath) {
   
   fs.writeFileSync(path.resolve(filePath), newVersion)
   
-/*  shell.exec(`git add ${filePath}`)
-  shell.exec(`git commit --amend --no-edit`)
-  shell.exec(`git push origin`)*/
-  
   logs.sectionEnd('Version stored successfully!')
 }

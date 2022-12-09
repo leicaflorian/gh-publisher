@@ -3,6 +3,7 @@
     "release": true
   },
   "hooks": {
-    "after:bump": "node ./release.hook.afterBump.js v${version} ./bin/version"
+    "after:bump": "node ./release.hook.afterBump.js v${version} ./bin/version",
+    "after:release": "node ./release.hook.afterRelease.js ${branchName}"
   }
 }
