@@ -9,7 +9,7 @@ mergeToBranches.forEach(branch => {
   logs.sectionStart(`Merging release branch to "${branch}"`)
   
   shell.exec(`git checkout ${branch}`, { silent: true })
-  shell.exec(`git merge ${workingBranch} -m ${commitMessage}`, { silent: false })
+  shell.exec(`git merge ${workingBranch} -m "${commitMessage}"`, { silent: false })
   shell.exec(`git push origin ${branch}`, { silent: true })
   
   // return to original branch
