@@ -2,7 +2,7 @@
   "name": "gh-publisher",
   "version": "1.0.0",
   "description": "Script for automating apps publishing",
-  "main": "publish.js",
+  "main": "scripts/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
