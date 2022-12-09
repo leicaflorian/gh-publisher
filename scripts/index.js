@@ -19,3 +19,8 @@ if (branch !== 'dev') {
 
 // bump version
 incrementVersion(process.argv[2])
+
+// push to dev
+shell.exec('git push origin dev')
+
+
