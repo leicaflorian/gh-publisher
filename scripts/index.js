@@ -7,9 +7,10 @@ program.name('package-publisher')
   .description('Script for publishing a project and creating a release')
   .argument('[versionIncrement]', 'The version increment. Valid increments are: \'major\', \'minor\', \'patch\'')
   .option('-b, --branch [destinationBranch]', 'Branch where the release will be created', 'staging')
+  .option('-r, --onlyRelease', 'Create only the release', false)
   /**
    * @param {string} versionIncrement
-   * @param {{branch: string}} options
+   * @param {{branch: string, onlyRelease: boolean}} options
    */
   .action((versionIncrement, options) => {
     
@@ -26,6 +27,11 @@ program.name('package-publisher')
     
     if (branch !== 'dev') {
       console.error('You are not on the dev branch, please switch to it before running this script')
+      return
+    }
+    
+    if (options.onlyRelease) {
+      createRelease()
       return
     }
     
@@ -46,10 +52,9 @@ program.name('package-publisher')
     shell.exec(`git push origin ${options.branch}`)
     
     // create release on Github if destination branch is main
-    if(options.branch === 'main') {
-      createRelease(newVersion)
+    if (options.branch === 'main') {
+      createRelease()
     }
-    
   })
 
 program.parse(process.argv)
