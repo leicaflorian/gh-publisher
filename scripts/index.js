@@ -1,6 +1,7 @@
 const shell = require('shelljs')
 const { program } = require('commander')
 const { incrementVersion } = require('./utilities/incrementVersion')
+const { createRelease } = require('./utilities/createRelease')
 
 program.name('package-publisher')
   .description('Script for publishing a project and creating a release')
@@ -42,6 +43,12 @@ program.name('package-publisher')
     // merge release branch to destination branch
     shell.exec(`git checkout ${options.branch}`)
     shell.exec(`git merge ${releaseBranchName}`)
+    shell.exec(`git push origin ${options.branch}`)
+    
+    // create release on Github if destination branch is main
+    if(options.branch === 'main') {
+      createRelease(newVersion)
+    }
     
   })
 
