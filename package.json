@@ -9,7 +9,8 @@
   "scripts": {
     "patch": "node . patch -b main -e bin/version",
     "minor": "node . minor -b main -e bin/version",
-    "major": "node . major -b main -e bin/version"
+    "major": "node . major -b main -e bin/version",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",
