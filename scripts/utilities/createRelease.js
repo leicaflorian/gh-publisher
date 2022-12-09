@@ -6,6 +6,15 @@ module.exports.createRelease = function (draft = false) {
   
   console.log(`Realising tag ${lastTag}`)
   
+  // check if a release already exists
+  const releases = shell.exec(`gh release view ${lastTag}`, { silent: true })
+  
+  if (releases.code === 0) {
+    console.log('Release already exists')
+    
+    return
+  }
+  
   shell.exec(`gh release create ${lastTag}${draft ? ' -d' : ''} -t "${lastTag}"`)
 }
 

@@ -8,16 +8,17 @@ program.name('package-publisher')
   .argument('[versionIncrement]', 'The version increment. Valid increments are: \'major\', \'minor\', \'patch\'')
   .option('-b, --branch [destinationBranch]', 'Branch where the release will be created', 'staging')
   .option('-r, --onlyRelease', 'Create only the release', false)
+  .option('--ignoreUncommitted', 'Execute the command and ignores if any uncommitted file ', false)
   /**
    * @param {string} versionIncrement
-   * @param {{branch: string, onlyRelease: boolean}} options
+   * @param {{branch: string, onlyRelease: boolean, ignoreUncommitted: boolean}} options
    */
   .action((versionIncrement, options) => {
     
     // check if all is committed
     const status = shell.exec('git status --porcelain', { silent: true }).stdout.toString().trim()
     
-    if (status) {
+    if (status && !options.ignoreUncommitted) {
       console.error('You have uncommitted changes, please commit them before running this script')
       return
     }
@@ -43,7 +44,8 @@ program.name('package-publisher')
     
     // create release branch
     const releaseBranchName = `release/${newVersion}`
-    shell.exec(`git checkout -b ${releaseBranchName}`)
+    // shell.exec(`git checkout -b ${releaseBranchName}`)
+    shell.exec(`git branch ${releaseBranchName}`)
     shell.exec(`git push origin ${releaseBranchName}`)
     
     // merge release branch to destination branch
