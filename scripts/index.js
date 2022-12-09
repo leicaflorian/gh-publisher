@@ -7,16 +7,18 @@ program.name('package-publisher')
   .description('Script for publishing a project and creating a release')
   .argument('[versionIncrement]', 'The version increment. Valid increments are: \'major\', \'minor\', \'patch\'')
   .option('-b, --branch [destinationBranch]', 'Branch where the release will be created', 'staging')
+  .option('-r, --onlyRelease', 'Create only the release', false)
+  .option('--ignoreUncommitted', 'Execute the command and ignores if any uncommitted file ', false)
   /**
    * @param {string} versionIncrement
-   * @param {{branch: string}} options
+   * @param {{branch: string, onlyRelease: boolean, ignoreUncommitted: boolean}} options
    */
   .action((versionIncrement, options) => {
     
     // check if all is committed
     const status = shell.exec('git status --porcelain', { silent: true }).stdout.toString().trim()
     
-    if (status) {
+    if (status && !options.ignoreUncommitted) {
       console.error('You have uncommitted changes, please commit them before running this script')
       return
     }
@@ -29,27 +31,35 @@ program.name('package-publisher')
       return
     }
     
+    if (options.onlyRelease) {
+      createRelease()
+      return
+    }
+    
     // bump version
     const newVersion = incrementVersion(versionIncrement)
     
     // push to dev
-    shell.exec('git push origin dev')
+    shell.exec('git push origin dev --follow-tags')
     
     // create release branch
     const releaseBranchName = `release/${newVersion}`
-    shell.exec(`git checkout -b ${releaseBranchName}`)
+    // shell.exec(`git checkout -b ${releaseBranchName}`)
+    shell.exec(`git branch ${releaseBranchName}`)
     shell.exec(`git push origin ${releaseBranchName}`)
     
     // merge release branch to destination branch
     shell.exec(`git checkout ${options.branch}`)
-    shell.exec(`git merge ${releaseBranchName}`)
+    shell.exec(`git merge ${releaseBranchName} --no-ff`)
     shell.exec(`git push origin ${options.branch}`)
     
-    // create release on Github if destination branch is main
-    if(options.branch === 'main') {
-      createRelease(newVersion)
+    // create release on GitHub if destination branch is main
+    if (options.branch === 'main') {
+      createRelease()
     }
     
+    // return to dev
+    shell.exec('git checkout dev')
   })
 
 program.parse(process.argv)
