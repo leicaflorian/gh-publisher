@@ -51,7 +51,7 @@ program.name('package-publisher')
     shell.exec(`git merge ${releaseBranchName} --no-ff`)
     shell.exec(`git push origin ${options.branch}`)
     
-    // create release on Github if destination branch is main
+    // create release on GitHub if destination branch is main
     if (options.branch === 'main') {
       createRelease()
     }
