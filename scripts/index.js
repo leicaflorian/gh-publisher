@@ -48,13 +48,16 @@ program.name('package-publisher')
     
     // merge release branch to destination branch
     shell.exec(`git checkout ${options.branch}`)
-    shell.exec(`git merge ${releaseBranchName}`)
+    shell.exec(`git merge ${releaseBranchName} --no-ff`)
     shell.exec(`git push origin ${options.branch}`)
     
     // create release on Github if destination branch is main
     if (options.branch === 'main') {
       createRelease()
     }
+    
+    // return to dev
+    shell.exec('git checkout dev')
   })
 
 program.parse(process.argv)
