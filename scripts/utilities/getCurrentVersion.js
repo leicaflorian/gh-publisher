@@ -5,5 +5,5 @@ module.exports.getCurrentVersion = function () {
   const jsonPath = path.resolve('package.json')
   const fileContent = fs.readFileSync(jsonPath, 'utf8')
   
-  return JSON.parse(fileContent).version
+  return 'v' + JSON.parse(fileContent).version
 }
