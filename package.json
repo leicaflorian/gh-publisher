@@ -10,7 +10,8 @@
     "patch": "node . patch -b main -e bin/version",
     "minor": "node . minor -b main -e bin/version",
     "major": "node . major -b main -e bin/version",
-    "publish": "npm publish"
+    "publish": "npm publish",
+    "release": "release-it"
   },
   "repository": {
     "type": "git",
@@ -33,5 +34,8 @@
   },
   "files": [
     "bin/"
-  ]
+  ],
+  "devDependencies": {
+    "release-it": "^15.5.1"
+  }
 }
