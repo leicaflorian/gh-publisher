@@ -15,6 +15,7 @@ program.name('package-publisher')
    * @param {{branch: string, onlyRelease: boolean, ignoreUncommitted: boolean}} options
    */
   .action((versionIncrement, options) => {
+    const branches = options.branch.split(',')
     
     // check if all is committed
     logs.sectionStart('Checking if all is committed')
@@ -52,23 +53,26 @@ program.name('package-publisher')
     logs.sectionStart('Creating release branch for ' + newVersion)
     
     const releaseBranchName = `release/${newVersion}`
-    // shell.exec(`git checkout -b ${releaseBranchName}`)
     shell.exec(`git branch ${releaseBranchName}`)
     shell.exec(`git push origin ${releaseBranchName}`)
     
     // merge release branch to destination branch
-    logs.sectionStart('Merging release branch to ' + options.branch)
+    logs.sectionStart('Merging release branch to ' + branches.join(', '))
     
-    shell.exec(`git checkout ${options.branch}`)
-    shell.exec(`git merge ${releaseBranchName} --no-ff`)
-    shell.exec(`git push origin ${options.branch}`)
+    // for each branch, merge release branch
+    branches.forEach(branch => {
+      shell.exec(`git checkout ${branch}`)
+      shell.exec(`git merge ${releaseBranchName} --no-ff`)
+      shell.exec(`git push origin ${branch}`)
+    })
     
     // create release on GitHub if destination branch is main
-    if (options.branch === 'main') {
+    if (branches.includes('main')) {
       createRelease()
     }
     
     // return to dev
+    logs.sectionStart('Returning to initial branch')
     shell.exec('git checkout dev')
   })
 
