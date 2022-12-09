@@ -10,7 +10,7 @@
     "patch": "node . patch -b main -e bin/version",
     "minor": "node . minor -b main -e bin/version",
     "major": "node . major -b main -e bin/version",
-    "publish": "npm publish --access public"
+    "publish": "npm publish"
   },
   "repository": {
     "type": "git",
