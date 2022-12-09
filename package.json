@@ -1,6 +1,6 @@
 {
   "name": "gh-publisher",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Script for automating apps publishing",
   "main": "scripts/index.js",
   "scripts": {
