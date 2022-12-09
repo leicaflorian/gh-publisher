@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/leicaflorian/gh-publisher#readme",
   "dependencies": {
+    "commander": "^9.4.1",
+    "inquirer": "^9.1.4",
     "shelljs": "^0.8.5"
   }
 }
