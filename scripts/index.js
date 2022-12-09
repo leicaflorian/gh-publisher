@@ -39,7 +39,7 @@ program.name('package-publisher')
     const newVersion = incrementVersion(versionIncrement)
     
     // push to dev
-    shell.exec('git push origin dev')
+    shell.exec('git push origin dev --follow-tags')
     
     // create release branch
     const releaseBranchName = `release/${newVersion}`
