@@ -4,7 +4,7 @@ module.exports = {
   },
   
   sectionEnd (message) {
-    console.log(`| ${message}...`)
+    console.log(`| ${message}!`)
   },
   
   error (message) {

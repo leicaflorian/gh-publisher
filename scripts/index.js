@@ -7,7 +7,7 @@ const logs = require('./utilities/logs')
 program.name('package-publisher')
   .description('Script for publishing a project and creating a release')
   .argument('[versionIncrement]', 'The version increment. Valid increments are: \'major\', \'minor\', \'patch\'')
-  .option('-b, --branch [destinationBranch]', 'Branch where the release will be created', 'staging')
+  .option('-b, --branch <destinationBranch>', 'Branch where the release will be created', 'staging')
   .option('-r, --onlyRelease', 'Create only the release', false)
   .option('--ignoreUncommitted', 'Execute the command and ignores if any uncommitted file ', false)
   /**
@@ -17,13 +17,15 @@ program.name('package-publisher')
   .action((versionIncrement, options) => {
     const branches = options.branch.split(',')
     
-    // check if all is committed
-    logs.sectionStart('Checking if all is committed')
-    const status = shell.exec('git status --porcelain', { silent: true }).stdout.toString().trim()
-    
-    if (status && !options.ignoreUncommitted) {
-      logs.error('You have uncommitted changes, please commit them before running this script')
-      return
+    // check if all is committed only if not specified to ignore
+    if (!options.ignoreUncommitted) {
+      logs.sectionStart('Checking if all is committed')
+      const status = shell.exec('git status --porcelain', { silent: true }).stdout.toString().trim()
+      
+      if (status) {
+        logs.error('You have uncommitted changes, please commit them before running this script')
+        return
+      }
     }
     
     // check branch is dev
@@ -54,7 +56,7 @@ program.name('package-publisher')
     
     const releaseBranchName = `release/${newVersion}`
     shell.exec(`git branch ${releaseBranchName}`, { silent: true })
-    shell.exec(`git push origin ${releaseBranchName}`)
+    shell.exec(`git push origin ${releaseBranchName}`, { silent: true })
     
     // merge release branch to destination branch
     // for each branch, merge release branch
@@ -67,7 +69,7 @@ program.name('package-publisher')
     })
     
     // create release on GitHub if destination branch is main
-    if (branches.includes('main')) {
+    if (branches.includes('main') || branches.includes('master')) {
       createRelease()
     }
     
@@ -75,7 +77,7 @@ program.name('package-publisher')
     logs.sectionStart('Returning to initial branch')
     shell.exec('git checkout dev', { silent: true })
     
-    logs.sectionEnd('Done!')
+    logs.sectionEnd('Done')
   })
 
 program.parse(process.argv)

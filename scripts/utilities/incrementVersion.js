@@ -31,7 +31,7 @@ module.exports.incrementVersion = function (versionIncrement) {
     throw new Error('Error bumping version')
   } else {
     newVersion = res.stdout.toString().replace(/\n/g, '').trim()
-    logs.sectionEnd(`Version bumped successfully to ${newVersion}!`)
+    logs.sectionEnd(`Version bumped successfully to ${newVersion}`)
   }
   
   return newVersion
