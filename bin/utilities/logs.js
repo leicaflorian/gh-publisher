@@ -1,3 +1,5 @@
+const chalk = require('chalk')
+
 module.exports = {
   sectionStart (message) {
     console.log(`\n-- ${message}...`)
@@ -8,6 +10,6 @@ module.exports = {
   },
   
   error (message) {
-    console.error(`[ERROR]: ${message}\n`)
+    console.error(`${chalk.red('[ERROR]')}: ${message}\n`)
   }
 }

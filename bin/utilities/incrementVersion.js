@@ -31,6 +31,10 @@ module.exports.incrementVersion = function (versionIncrement) {
     throw new Error('Error bumping version')
   } else {
     newVersion = res.stdout.toString().replace(/\n/g, '').trim()
+    
+    // push to dev
+    shell.exec('git push origin dev --follow-tags')
+    
     logs.sectionEnd(`Version bumped successfully to ${newVersion}`)
   }
   

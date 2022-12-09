@@ -1,10 +1,16 @@
+#!/usr/bin/env node
+'use strict'
+
 const shell = require('shelljs')
 const { program } = require('commander')
 const { incrementVersion } = require('./utilities/incrementVersion')
 const { createRelease } = require('./utilities/createRelease')
 const logs = require('./utilities/logs')
+const { checkUncommittedChanges } = require('./utilities/checkUncommittedChanges')
+const { checkBranch } = require('./utilities/checkBranch')
+const { createReleaseBranch } = require('./utilities/createReleaseBranch')
 
-program.name('package-publisher')
+program.name('ghp')
   .description('Script for publishing a project and creating a release')
   .argument('[versionIncrement]', 'The version increment. Valid increments are: \'major\', \'minor\', \'patch\'')
   .option('-b, --branch <destinationBranch>', 'Branch where the release will be created', 'staging')
@@ -19,23 +25,11 @@ program.name('package-publisher')
     
     // check if all is committed only if not specified to ignore
     if (!options.ignoreUncommitted) {
-      logs.sectionStart('Checking if all is committed')
-      const status = shell.exec('git status --porcelain', { silent: true }).stdout.toString().trim()
-      
-      if (status) {
-        logs.error('You have uncommitted changes, please commit them before running this script')
-        return
-      }
+      checkUncommittedChanges()
     }
     
     // check branch is dev
-    logs.sectionStart('Checking if branch is "dev"')
-    const branch = shell.exec('git branch --show-current', { silent: true }).stdout.toString().trim()
-    
-    if (branch !== 'dev') {
-      logs.error('You are not on the dev branch, please switch to it before running this script')
-      return
-    }
+    checkBranch('dev')
     
     // if requested only release, create it and exit
     if (options.onlyRelease) {
@@ -48,25 +42,8 @@ program.name('package-publisher')
     // bump version
     const newVersion = incrementVersion(versionIncrement)
     
-    // push to dev
-    shell.exec('git push origin dev --follow-tags')
-    
     // create release branch
-    logs.sectionStart('Creating release branch for ' + newVersion)
-    
-    const releaseBranchName = `release/${newVersion}`
-    shell.exec(`git branch ${releaseBranchName}`, { silent: true })
-    shell.exec(`git push origin ${releaseBranchName}`, { silent: true })
-    
-    // merge release branch to destination branch
-    // for each branch, merge release branch
-    branches.forEach(branch => {
-      logs.sectionStart(`Merging release branch to "${branch}"`)
-      
-      shell.exec(`git checkout ${branch}`, { silent: true })
-      shell.exec(`git merge ${releaseBranchName} --no-ff`, { silent: true })
-      shell.exec(`git push origin ${branch}`, { silent: true })
-    })
+    createReleaseBranch(newVersion, branches)
     
     // create release on GitHub if destination branch is main
     if (branches.includes('main') || branches.includes('master')) {
