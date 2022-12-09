@@ -7,7 +7,7 @@ release and pushing the changes to remote.
 ## Installation
 
 ```bash
-npm install -g github-publisher
+npm install -g gh-publisher
 ```
 
 ## Usage
