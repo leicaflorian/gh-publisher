@@ -1,6 +1,6 @@
 const shell = require('shelljs')
 
-module.exports.createRelease = function (version) {
+module.exports.createRelease = function () {
   const tags = shell.exec('git tag', { silent: true }).stdout.toString().split('\n')
   const lastTag = tags[tags.length - 2]
   
